@@ -2,24 +2,38 @@ var express = require("express");
 var router = express.Router();
 var db = require("../db");
 
-/* GET players listing. */
+/* GET the ordered players list. */
 router.get("/", (_, res) => {
+  if (db.state != db.State.PLAYING) {
+    return res.status(404);
+  }
   res.json(db.players);
 });
 
-/* POST a new player. */
+/* POST an ordered list of players. */
 router.post("/", (req, res) => {
-  if (db.state == db.State.PLAYING || db.state == db.State.CHOOSING_TEAMS) {
-    return res.status(400).send("Can't add players to an ongoing game");
+  const token = req.query.token;
+  const player = db.playersByToken[token];
+  if (!token || !player) {
+    return res.status(403);
   }
-  const name = req.body.name;
-  if (!name) {
-    return res.status(400).send("You must provide a name");
+  if (db.state != db.State.CHOOSING_TEAMS) {
+    return res.status(400).send("Can't define teams now");
   }
-  db.players.push(name);
-  const uuid = uuidv4();
-  db.tokens[uuid] = name;
-  res.json({ token: uuid });
+  if (!db.teamChooser || db.teamChooser != player) {
+    return res.status(403);
+  }
+  const teams = req.body.players;
+  if (new Set(teams) != new Set(db.players)) {
+    return res.status(400).send("The teams do not match the players");
+  }
+  db.players = [...teams];
+  db.dealPieces();
+  db.currentPlayer = Object.keys(db.hands).find((player) =>
+    db.hands[player].includes([6, 6])
+  );
+  db.state = db.State.PLAYING;
+  return res.status(200);
 });
 
 module.exports = router;

@@ -15,6 +15,33 @@ var firstPiece = []; // the first piece that was played, for table positioning
 var currentPlayer = undefined;
 var scoreLog = [][2]; // list of rounds, for each the points gained by each team
 
+/* Assumes players are available. */
+function dealPieces() {
+  if (!players || players.length != 4) {
+    throw "Players need to be provided";
+  }
+  var pieces = [][2];
+  for (var i = 0; i < 7; i++) {
+    for (var j = i; j < 7; j++) {
+      pieces.push([i, j]);
+    }
+  }
+  shuffle(pieces);
+  for (var player of players) {
+    hands[player] = pieces.splice(0, 7);
+  }
+}
+
+function shuffle(a) {
+  for (let i = a.length; i; i--) {
+    const j = Math.floor(Math.random() * i);
+    const x = a[i - 1];
+    a[i - 1] = a[j];
+    a[j] = x;
+  }
+  return a;
+}
+
 module.exports = {
   State,
   state,
@@ -26,4 +53,5 @@ module.exports = {
   firstPiece,
   currentPlayer,
   scoreLog,
+  dealPieces,
 };
