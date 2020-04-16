@@ -1,35 +1,72 @@
-const State = Object.freeze({
-  NO_GAME: 1,
-  GAME_IN_PROGRESS: 2,
-  END_OF_ROUND: 3,
-});
+class Game {
+  constructor(id, players) {
+    this.id = id;
+    this.players = players; // ordered once the game starts, 0&2 vs 1&3
+    this.passwords = {}; // name : password
+    this.hands = dealPieces(players); // name : list of pieces ([][])
+    this.table = [][2]; // list of pieces from left to right
+    this.firstPiece = []; // the first piece that was played, for table positioning
+    this.currentPlayer = Object.keys(this.hands).find((player) =>
+      this.hands[player].includes([6, 6])
+    );
+    this.scoreLog = [][2]; // list of rounds, for each the points gained by each team
+  }
 
-var state = State.NO_GAME;
-var id = undefined;
-var players = []; // ordered once the game starts, 0&2 vs 1&3
-var passwords = {}; // name : password
-var hands = {}; // name : list of pieces ([][])
-var table = [][2]; // list of pieces from left to right
-var firstPiece = []; // the first piece that was played, for table positioning
-var currentPlayer = undefined;
-var scoreLog = [][2]; // list of rounds, for each the points gained by each team
+  view(player) {
+    var handsView = {};
+    for (var p in this.hands) {
+      handsView[player] = p == player ? this.hands[p] : this.hands[p].length;
+    }
+    return {
+      id,
+      players,
+      hands: handsView,
+      table,
+      firstPiece,
+      currentPlayer,
+      scoreLog,
+    };
+  }
+}
 
-/* Assumes players are available. */
-function dealPieces() {
+function dealPieces(players) {
   if (!players || players.length != 4) {
-    console.log(players);
-    console.log(id);
     throw "Players need to be provided";
   }
-  var pieces = [][2];
+  var pieces = [];
   for (var i = 0; i < 7; i++) {
     for (var j = i; j < 7; j++) {
       pieces.push([i, j]);
     }
   }
   shuffle(pieces);
+  var hands = {};
   for (var player of players) {
     hands[player] = pieces.splice(0, 7);
+  }
+  return hands;
+}
+
+class GameState {
+  constructor() {
+    this.State = Object.freeze({
+      NO_GAME: 1,
+      GAME_IN_PROGRESS: 2,
+      END_OF_ROUND: 3,
+    });
+    this.Game = Game;
+    this.state = this.State.NO_GAME;
+    this.game = undefined;
+  }
+
+  startGame(id, players) {
+    this.game = new Game(id, players);
+    this.state = this.State.GAME_IN_PROGRESS;
+  }
+
+  endGame() {
+    delete this.game;
+    this.state = this.State.NO_GAME;
   }
 }
 
@@ -43,16 +80,4 @@ function shuffle(a) {
   return a;
 }
 
-module.exports = {
-  State,
-  state,
-  id,
-  players,
-  passwords,
-  hands,
-  table,
-  firstPiece,
-  currentPlayer,
-  scoreLog,
-  dealPieces,
-};
+module.exports = exports = new GameState();
