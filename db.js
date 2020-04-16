@@ -1,12 +1,10 @@
 const State = Object.freeze({
   NO_GAME: 1,
-  WAITING_FOR_PLAYERS: 2,
-  CHOOSING_TEAMS: 3,
-  PLAYING: 4,
+  GAME_IN_PROGRESS: 2,
+  END_OF_ROUND: 3,
 });
 
 var state = State.NO_GAME;
-var teamChooser = undefined; // player selecting the teams
 var players = []; // ordered once the game starts, 0&2 vs 1&3
 var playersByToken = {}; // token : name
 var hands = {}; // name : list of pieces ([][])
@@ -45,7 +43,6 @@ function shuffle(a) {
 module.exports = {
   State,
   state,
-  teamChooser,
   players,
   playersByToken,
   hands,
