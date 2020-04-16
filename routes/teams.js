@@ -5,7 +5,7 @@ var db = require("../db");
 /* GET the ordered players list. */
 router.get("/", (_, res) => {
   if (db.state != db.State.PLAYING) {
-    return res.status(404);
+    return res.sendStatus(404);
   }
   res.json(db.players);
 });
@@ -15,13 +15,13 @@ router.post("/", (req, res) => {
   const token = req.query.token;
   const player = db.playersByToken[token];
   if (!token || !player) {
-    return res.status(403);
+    return res.sendStatus(403);
   }
   if (db.state != db.State.CHOOSING_TEAMS) {
     return res.status(400).send("Can't define teams now");
   }
   if (!db.teamChooser || db.teamChooser != player) {
-    return res.status(403);
+    return res.sendStatus(403);
   }
   const teams = req.body.players;
   if (new Set(teams) != new Set(db.players)) {
@@ -33,7 +33,7 @@ router.post("/", (req, res) => {
     db.hands[player].includes([6, 6])
   );
   db.state = db.State.PLAYING;
-  return res.status(200);
+  return res.sendStatus(200);
 });
 
 module.exports = router;

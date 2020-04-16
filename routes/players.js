@@ -11,19 +11,19 @@ router.get("/", (_, res) => {
 
 /* POST a new player. */
 router.post("/", (req, res) => {
-  if (db.state == db.State.PLAYING || db.state == db.State.CHOOSING_TEAMS) {
-    return res.status(400).send("Can't add players during a game");
+  if (db.players.length == 4) {
+    return res.status(400).send("Can't add more players");
   }
   const name = req.body.name;
   if (!name) {
     return res.status(400).send("You must provide a name");
   }
-  db.players.push(name);
-  if (db.players.length == 4) {
-    db.state = db.State.CHOOSING_TEAMS;
+  if (db.players.includes(name)) {
+    return res.status(400).send("This name already exists");
   }
+  db.players.push(name);
   const uuid = uuidv4();
-  db.tokens[uuid] = name;
+  db.playersByToken[uuid] = name;
   return res.json({ token: uuid });
 });
 
