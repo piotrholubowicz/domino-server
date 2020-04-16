@@ -5,8 +5,9 @@ const State = Object.freeze({
 });
 
 var state = State.NO_GAME;
+var id = undefined;
 var players = []; // ordered once the game starts, 0&2 vs 1&3
-var playersByToken = {}; // token : name
+var passwords = {}; // name : password
 var hands = {}; // name : list of pieces ([][])
 var table = [][2]; // list of pieces from left to right
 var firstPiece = []; // the first piece that was played, for table positioning
@@ -16,6 +17,8 @@ var scoreLog = [][2]; // list of rounds, for each the points gained by each team
 /* Assumes players are available. */
 function dealPieces() {
   if (!players || players.length != 4) {
+    console.log(players);
+    console.log(id);
     throw "Players need to be provided";
   }
   var pieces = [][2];
@@ -43,8 +46,9 @@ function shuffle(a) {
 module.exports = {
   State,
   state,
+  id,
   players,
-  playersByToken,
+  passwords,
   hands,
   table,
   firstPiece,

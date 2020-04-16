@@ -1,30 +1,27 @@
-const { v4: uuidv4 } = require("uuid");
-
 var express = require("express");
 var router = express.Router();
 var db = require("../db");
 
 /* GET players listing. */
 router.get("/", (_, res) => {
-  res.json(db.players);
+  return res.json(db.players);
 });
 
-/* POST a new player. */
-router.post("/", (req, res) => {
-  if (db.players.length == 4) {
-    return res.status(400).send("Can't add more players");
+/* PUT to change the password. Allowed only once. */
+router.post("/:id", (req, res) => {
+  const player = req.params.id;
+  if (!db.players.includes(player)) {
+    return res.sendStatus(404);
   }
-  const name = req.body.name;
-  if (!name) {
-    return res.status(400).send("You must provide a name");
+  if (db.passwords[player]) {
+    return res.status(409).send("Password already exists");
   }
-  if (db.players.includes(name)) {
-    return res.status(400).send("This name already exists");
+  const password = req.body.password;
+  if (!password) {
+    return res.status(400).send("You must provide a password");
   }
-  db.players.push(name);
-  const uuid = uuidv4();
-  db.playersByToken[uuid] = name;
-  return res.json({ token: uuid });
+  db.passwords[player] = password;
+  return res.sendStatus(200);
 });
 
 module.exports = router;

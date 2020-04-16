@@ -11,12 +11,10 @@ assert ()                 #  If condition false,
   fi 
 }    
 
-assert "`curl -X GET -s -o /dev/null -w "%{http_code}" http://localhost:3000/players` -eq 200"
-curl -POST http://localhost:3000/players -H 'Content-Type: application/json' -d '{ "name": "aa" }'
-assert "`curl -POST -s -o /dev/null -w "%{http_code}" http://localhost:3000/players -H 'Content-Type: application/json' -d '{ "name": "aa" }'` -eq 400"
-curl -POST http://localhost:3000/players -H 'Content-Type: application/json' -d '{ "name": "bb" }'
-curl -POST http://localhost:3000/players -H 'Content-Type: application/json' -d '{ "name": "cc" }'
-curl -POST http://localhost:3000/players -H 'Content-Type: application/json' -d '{ "name": "dd" }'
-assert "`curl -X POST -s -o /dev/null -w "%{http_code}" http://localhost:3000/teamchooser` -eq 403"
+# assert "`curl -X GET -s -o /dev/null -w "%{http_code}" http://localhost:3000/players` -eq 200"
+echo && curl -X GET http://localhost:3000/game -H 'Content-Type: application/json'
+echo && curl -X GET http://localhost:3000/players -H 'Content-Type: application/json'
+echo && curl -X POST http://localhost:3000/game -H 'Content-Type: application/json' -d '{ "players": ["Alpha", "Bravo", "Charlie", "Delta"] }'
+echo && curl -X GET http://localhost:3000/players -H 'Content-Type: application/json'
 
-echo '\nFinished.\n'
+echo '\nFinished.'
