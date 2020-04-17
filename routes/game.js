@@ -6,7 +6,7 @@ var State = require("../state");
 /* GET the game if exists. */
 router.get("/", (_, res) => {
   if (db.getState() === State.NO_GAME) {
-    return res.sendStatus(404);
+    return res.json({ state: "NO_GAME" });
   }
   res.redirect("game/" + db.game.id);
 });

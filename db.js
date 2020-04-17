@@ -27,6 +27,7 @@ class Game {
     }
     return {
       id: this.id,
+      state: Object.keys(State).find((name) => State[name] === this.state),
       players: this.players,
       hands: handsView,
       table: this.table,

@@ -6,7 +6,7 @@ The backend for hosting domino games.
 
 /game
 
-- GET /game - redirects to /game/X or 404 Not Found
+- GET /game - redirects to /game/X or returns `state: NO_GAME`
 - POST /game - creates a new game for the provided 4 players or 409 Conflict if already exists
 
 - GET /game/X - returns the game; use basic HTTP authentication to get a view for a player
