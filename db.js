@@ -39,6 +39,9 @@ class Game {
   }
 
   makeMove(player, move) {
+    if (this.state !== State.GAME_IN_PROGRESS) {
+      throw "Round ended";
+    }
     if (player !== this.currentPlayer) {
       throw "Not your turn";
     }
@@ -57,7 +60,7 @@ class Game {
     }
     const piece = move.piece;
     const placement = move.placement;
-    if (this.scoreLog.length == 0 && !pieceEquals.call(piece, [6, 6])) {
+    if (this.table.length == 0 && !pieceEquals.call(piece, [6, 6])) {
       throw `The game must start with [6,6]`;
     }
     const pieceIdx = this.hands[player].findIndex(pieceEquals, piece);
@@ -106,7 +109,7 @@ class Game {
 
   endOfRound() {
     if (this.hands[this.currentPlayer].length === 0) {
-      this.roundFinished();
+      this.addScore(this.roundFinished());
       return true;
     }
     if (
@@ -117,7 +120,7 @@ class Game {
           piece[0] === this.table[0][0] || piece[1] === this.table[0][0]
       ).length === 7
     ) {
-      this.roundBlocked();
+      this.addScore(this.roundBlocked());
       return true;
     }
     return false;
@@ -125,17 +128,52 @@ class Game {
 
   roundFinished() {
     this.state = State.ROUND_FINISHED;
-    // TODO calculate score
+    const teammate = this.players[(this.currentPlayerIdx() + 2) % 4];
+    var score = 0;
+    for (var player of this.players) {
+      if (player != this.currentPlayer && player != teammate) {
+        score = score += this.hands[player].reduce(
+          (sum, piece) => sum + piece[0] + piece[1],
+          0
+        );
+      }
+    }
+    return score;
   }
 
   roundBlocked() {
     this.state = State.ROUND_BLOCKED;
-    // TODO calculate score
+    var points = [0, 0];
+    for (const [i, player] of this.players.entries()) {
+      points[i % 2] += this.hands[player].reduce(
+        (sum, piece) => sum + piece[0] + piece[1],
+        0
+      );
+    }
+    if (points[0] < points[1]) {
+      return [points[1], 0];
+    }
+    if (points[0] > points[1]) {
+      return [0, points[0]];
+    }
+    return [0, 0];
+  }
+
+  addScore(score) {
+    const idx = this.currentPlayerIdx();
+    if (idx === 0 || idx === 2) {
+      this.scoreLog.push([score, 0]);
+    } else {
+      this.scoreLog.push([0, score]);
+    }
   }
 
   advancePlayer() {
-    const playerIdx = this.players.indexOf(this.currentPlayer);
-    this.currentPlayer = this.players[(playerIdx + 1) % 4];
+    this.currentPlayer = this.players[(this.currentPlayerIdx() + 1) % 4];
+  }
+
+  currentPlayerIdx() {
+    return this.players.indexOf(this.currentPlayer);
   }
 }
 
