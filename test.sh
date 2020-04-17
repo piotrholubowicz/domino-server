@@ -1,23 +1,11 @@
 #!/bin/bash
 
-assert ()                 #  If condition false,
-{                         #+ exit from script with error message.
-  E_ASSERT_FAILED=99
-  
-  if [ ! $1 ] 
-  then
-    echo "Assertion failed:  \"$1\""
-    exit $E_ASSERT_FAILED
-  fi 
-}    
-
 JS='Content-Type: application/json'
 A1='Authorization: Basic QWxwaGE6QTE='
 B2='Authorization: Basic QnJhdm86QjI='
 C3='Authorization: Basic Q2hhcmxpZTpDMw=='
 D4='Authorization: Basic RGVsdGE6RDQ='
 
-# assert "`curl -X GET -s -o /dev/null -w "%{http_code}" http://localhost:3000/players` -eq 200"
 echo && curl -X GET http://localhost:3000/game -H "$JS"
 echo && curl -X GET http://localhost:3000/players -H "$JS"
 echo && curl -X POST http://localhost:3000/game?mock=1 -H "$JS" -d '{ "players": ["Alpha", "Bravo", "Charlie", "Delta"] }'
@@ -56,6 +44,8 @@ echo && curl -X POST http://localhost:3000/game/X -H "$JS" -H "$D4" -d '{ "move"
 echo && curl -X POST http://localhost:3000/game/X -H "$JS" -H "$A1" -d '{ "move": { "piece": [0,0], "placement": "right" } }'
 echo && curl -X POST http://localhost:3000/game/X -H "$JS" -H "$B2" -d '{ "move": { "piece": [1,1], "placement": "left" } }'
 echo && curl -X POST http://localhost:3000/game/X -H "$JS" -H "$C3" -d '{ "move": { "piece": [0,2], "placement": "right" } }'
+echo && curl -X GET -L http://localhost:3000/game -H "$JS"
+echo && curl -X POST http://localhost:3000/game/X -H "$JS" -H "$A1" -d '{ "nextround": true }'
 echo && curl -X GET -L http://localhost:3000/game -H "$JS"
 
 echo && curl -X DELETE http://localhost:3000/game/X -H "$B2"

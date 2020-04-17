@@ -13,9 +13,7 @@ class Game {
       this.hands[player].find(pieceEquals, [6, 6])
     );
     this.startingPlayer = this.currentPlayer;
-    this.endingPlayer = undefined; //
     this.scoreLog = []; // list of rounds, for each the points gained by each team
-    console.log(this.hands);
   }
 
   getState() {
@@ -47,7 +45,7 @@ class Game {
     }
     if (move === "pass") {
       // validate?
-      this.advancePlayer();
+      this.currentPlayer = this.incrementPlayer(this.currentPlayer);
       return;
     }
     if (
@@ -79,7 +77,7 @@ class Game {
     }
     this.hands[player].splice(pieceIdx, 1);
     if (!this.endOfRound()) {
-      this.advancePlayer();
+      this.currentPlayer = this.incrementPlayer(this.currentPlayer);
     }
   }
 
@@ -166,12 +164,23 @@ class Game {
     }
   }
 
-  advancePlayer() {
-    this.currentPlayer = this.players[(this.currentPlayerIdx() + 1) % 4];
-  }
-
   currentPlayerIdx() {
     return this.players.indexOf(this.currentPlayer);
+  }
+
+  nextRound(player) {
+    if (this.state == State.GAME_IN_PROGRESS) {
+      throw "This round is still in progress";
+    }
+    this.table = [];
+    this.hands = dealPieces(this.players);
+    this.startingPlayer = this.incrementPlayer(this.startingPlayer);
+    this.currentPlayer = this.startingPlayer;
+    this.state = State.GAME_IN_PROGRESS;
+  }
+
+  incrementPlayer(player, increment = 1) {
+    return this.players[(this.players.indexOf(player) + increment) % 4];
   }
 }
 

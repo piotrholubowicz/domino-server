@@ -48,16 +48,19 @@ router.post("/:id", (req, res) => {
     return res.sendStatus(403);
   }
   const player = auth[0];
-  if (req.body.move) {
-    try {
+  try {
+    if (req.body.move) {
       db.game.makeMove(player, req.body.move);
-    } catch (err) {
-      console.log(err);
-      return res.status(400).send(err);
+    } else if (req.body.nextround) {
+      db.game.nextRound(player);
+    } else {
+      return res.status(400).send("You must provide a move or next round");
     }
     return res.sendStatus(200);
+  } catch (err) {
+    console.log(err);
+    return res.status(400).send(err);
   }
-  return res.status(400).send("You must provide a move");
 });
 
 /* DELETE the game. */
