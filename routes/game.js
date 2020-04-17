@@ -7,7 +7,7 @@ router.get("/", (_, res) => {
   if (db.state == db.State.NO_GAME) {
     return res.sendStatus(404);
   }
-  res.redirect("/" + db.game.id);
+  res.redirect("game/" + db.game.id);
 });
 
 /* POST to create a game. */
@@ -31,7 +31,7 @@ router.get("/:id", (req, res) => {
   }
   const auth = getAuth(req);
   const player = auth ? auth[0] : undefined;
-  if (db.game.passwords[auth[0]] != auth[1]) {
+  if (auth && db.game.passwords[auth[0]] != auth[1]) {
     return res.sendStatus(403);
   }
   return res.json(db.game.view(player));

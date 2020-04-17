@@ -16,5 +16,10 @@ echo && curl -X GET http://localhost:3000/game -H 'Content-Type: application/jso
 echo && curl -X GET http://localhost:3000/players -H 'Content-Type: application/json'
 echo && curl -X POST http://localhost:3000/game -H 'Content-Type: application/json' -d '{ "players": ["Alpha", "Bravo", "Charlie", "Delta"] }'
 echo && curl -X GET http://localhost:3000/players -H 'Content-Type: application/json'
+echo && curl -X PUT http://localhost:3000/players/Alpha -H 'Content-Type: application/json' -d '{ "password": "A1" }'
+echo && curl -X PUT http://localhost:3000/players/Bravo -H 'Content-Type: application/json' -d '{ "password": "B2" }'
+echo && curl -X PUT http://localhost:3000/players/Charlie -H 'Content-Type: application/json' -d '{ "password": "C3" }'
+echo && curl -X PUT http://localhost:3000/players/Delta -H 'Content-Type: application/json' -d '{ "password": "D4" }'
+echo && curl -X GET -L http://localhost:3000/game -H 'Content-Type: application/json'
 
 echo '\nFinished.'

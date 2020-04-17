@@ -10,7 +10,7 @@ router.get("/", (_, res) => {
 });
 
 /* PUT to change the password. Allowed only once. */
-router.post("/:id", (req, res) => {
+router.put("/:id", (req, res) => {
   const player = req.params.id;
   if (db.state == db.State.NO_GAME || !db.game.players.includes(player)) {
     return res.sendStatus(404);

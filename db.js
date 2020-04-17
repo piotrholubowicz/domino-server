@@ -18,13 +18,13 @@ class Game {
       handsView[player] = p == player ? this.hands[p] : this.hands[p].length;
     }
     return {
-      id,
-      players,
+      id: this.id,
+      players: this.players,
       hands: handsView,
-      table,
-      firstPiece,
-      currentPlayer,
-      scoreLog,
+      table: this.table,
+      firstPiece: this.firstPiece,
+      currentPlayer: this.currentPlayer,
+      scoreLog: this.scoreLog,
     };
   }
 }
