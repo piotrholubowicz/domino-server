@@ -7,15 +7,17 @@ class Game {
     this.table = [][2]; // list of pieces from left to right
     this.firstPiece = []; // the first piece that was played, for table positioning
     this.currentPlayer = Object.keys(this.hands).find((player) =>
-      this.hands[player].includes([6, 6])
+      this.hands[player].find((piece) => piece[0] == 6 && piece[1] == 6)
     );
     this.scoreLog = [][2]; // list of rounds, for each the points gained by each team
+    console.log(this.hands);
+    console.log(this.currentPlayer);
   }
 
   view(player) {
     var handsView = {};
     for (var p in this.hands) {
-      handsView[player] = p == player ? this.hands[p] : this.hands[p].length;
+      handsView[p] = p == player ? this.hands[p] : this.hands[p].length;
     }
     return {
       id: this.id,
