@@ -109,7 +109,7 @@ class Game {
 
   endOfRound() {
     if (this.hands[this.currentPlayer].length === 0) {
-      this.addScore(this.roundFinished());
+      this.scoreLog.push(this.roundFinished());
       return true;
     }
     if (
@@ -128,17 +128,15 @@ class Game {
 
   roundFinished() {
     this.state = State.ROUND_FINISHED;
-    const teammate = this.players[(this.currentPlayerIdx() + 2) % 4];
+    const idx = this.currentPlayerIdx();
     var score = 0;
-    for (var player of this.players) {
-      if (player != this.currentPlayer && player != teammate) {
-        score = score += this.hands[player].reduce(
-          (sum, piece) => sum + piece[0] + piece[1],
-          0
-        );
-      }
+    for (var i of [(idx + 1) % 4, (idx + 3) % 4]) {
+      score += this.hands[this.players[i]].reduce(
+        (sum, piece) => sum + piece[0] + piece[1],
+        0
+      );
     }
-    return score;
+    return idx % 2 == 0 ? [score, 0] : [0, score];
   }
 
   roundBlocked() {
