@@ -10,7 +10,7 @@ The backend for hosting domino games.
 - POST /game - creates a new game for the provided 4 players or 409 Conflict if already exists
 
 - GET /game/X - returns the game; use basic HTTP authentication to get a view for a player
-- POST /game/X - make a move or chooses to start the next round; authentication required
+- POST /game/X - make a move or choose to start the next round; authentication required
 - DELETE /game/X - ends the game and deletes all players; authentication required
 
 /players
