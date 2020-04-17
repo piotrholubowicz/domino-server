@@ -1,16 +1,25 @@
+var State = require("./state");
+
 class Game {
   constructor(id, players, mock) {
     this.id = id;
+    this.state = State.GAME_IN_PROGRESS;
     this.players = players; // ordered once the game starts, 0&2 vs 1&3
     this.passwords = {}; // name : password
     this.hands = mock ? mockPieces(players) : dealPieces(players); // name : list of pieces ([][])
-    this.table = [][2]; // list of pieces from left to right
+    this.table = []; // list of pieces from left to right
     this.firstPiece = []; // the first piece that was played, for table positioning
     this.currentPlayer = Object.keys(this.hands).find((player) =>
-      this.hands[player].find((piece) => piece[0] == 6 && piece[1] == 6)
+      this.hands[player].find(pieceEquals, [6, 6])
     );
-    this.scoreLog = [][2]; // list of rounds, for each the points gained by each team
+    this.startingPlayer = this.currentPlayer;
+    this.endingPlayer = undefined; //
+    this.scoreLog = []; // list of rounds, for each the points gained by each team
     console.log(this.hands);
+  }
+
+  getState() {
+    return this.state;
   }
 
   view(player) {
@@ -29,7 +38,112 @@ class Game {
     };
   }
 
-  makeMove(player, piece, placement) {}
+  makeMove(player, move) {
+    if (player !== this.currentPlayer) {
+      throw "Not your turn";
+    }
+    if (move === "pass") {
+      // validate?
+      this.advancePlayer();
+      return;
+    }
+    if (
+      !move.piece ||
+      move.piece.length != 2 ||
+      !move.placement ||
+      !["left", "right"].includes(move.placement)
+    ) {
+      throw "You must provide a piece and a placement";
+    }
+    const piece = move.piece;
+    const placement = move.placement;
+    if (this.scoreLog.length == 0 && !pieceEquals.call(piece, [6, 6])) {
+      throw `The game must start with [6,6]`;
+    }
+    const pieceIdx = this.hands[player].findIndex(pieceEquals, piece);
+    if (pieceIdx === -1) {
+      throw `You don't have a piece ${piece}`;
+    }
+    if (this.table.length == 0) {
+      this.table.push(piece);
+      this.firstPiece = piece;
+    } else {
+      if (placement === "left") {
+        this.playLeft(piece);
+      } else if (placement === "right") {
+        this.playRight(piece);
+      }
+    }
+    this.hands[player].splice(pieceIdx, 1);
+    if (!this.endOfRound()) {
+      this.advancePlayer();
+    }
+  }
+
+  playLeft(piece) {
+    const endPiece = this.table[0];
+    if (piece[1] === endPiece[0]) {
+      // all good
+    } else if (piece[0] === endPiece[0]) {
+      piece.reverse();
+    } else {
+      throw `Piece ${piece} does not match ${endPiece}`;
+    }
+    this.table.unshift(piece);
+  }
+
+  playRight(piece) {
+    const endPiece = this.table[this.table.length - 1];
+    if (piece[0] === endPiece[1]) {
+      // all good
+    } else if (piece[1] === endPiece[1]) {
+      piece.reverse();
+    } else {
+      throw `Piece ${piece} does not match ${endPiece}`;
+    }
+    this.table.push(piece);
+  }
+
+  endOfRound() {
+    if (this.hands[this.currentPlayer].length === 0) {
+      this.roundFinished();
+      return true;
+    }
+    if (
+      this.table.length > 6 &&
+      this.table[0][0] === this.table[this.table.length - 1][1] &&
+      this.table.filter(
+        (piece) =>
+          piece[0] === this.table[0][0] || piece[1] === this.table[0][0]
+      ).length === 7
+    ) {
+      this.roundBlocked();
+      return true;
+    }
+    return false;
+  }
+
+  roundFinished() {
+    this.state = State.ROUND_FINISHED;
+    // TODO calculate score
+  }
+
+  roundBlocked() {
+    this.state = State.ROUND_BLOCKED;
+    // TODO calculate score
+  }
+
+  advancePlayer() {
+    const playerIdx = this.players.indexOf(this.currentPlayer);
+    this.currentPlayer = this.players[(playerIdx + 1) % 4];
+  }
+}
+
+function pieceEquals(piece) {
+  return (
+    (this[0] === piece[0] && this[1] === piece[1]) ||
+    (this[1] === piece[0] && this[0] === piece[1])
+  );
 }
 
 function dealPieces(players) {
@@ -93,24 +207,24 @@ function mockPieces(players) {
 
 class GameState {
   constructor() {
-    this.State = Object.freeze({
-      NO_GAME: 1,
-      GAME_IN_PROGRESS: 2,
-      END_OF_ROUND: 3,
-    });
     this.Game = Game;
-    this.state = this.State.NO_GAME;
     this.game = undefined;
+  }
+
+  getState() {
+    if (!this.game) {
+      return State.NO_GAME;
+    }
+    return this.game.getState();
   }
 
   startGame(id, players, mock = false) {
     this.game = new Game(id, players, mock);
-    this.state = this.State.GAME_IN_PROGRESS;
+    this.state = State.GAME_IN_PROGRESS;
   }
 
   endGame() {
     delete this.game;
-    this.state = this.State.NO_GAME;
   }
 }
 

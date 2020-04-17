@@ -1,10 +1,11 @@
 var express = require("express");
 var router = express.Router();
 var db = require("../db");
+var State = require("../state");
 
 /* GET the game if exists. */
 router.get("/", (_, res) => {
-  if (db.state == db.State.NO_GAME) {
+  if (db.getState() === State.NO_GAME) {
     return res.sendStatus(404);
   }
   res.redirect("game/" + db.game.id);
@@ -12,7 +13,7 @@ router.get("/", (_, res) => {
 
 /* POST to create a game. */
 router.post("/", (req, res) => {
-  if (db.state != db.State.NO_GAME) {
+  if (db.getState() !== State.NO_GAME) {
     return res.status(409).send("Can't add more games");
   }
 
@@ -26,7 +27,7 @@ router.post("/", (req, res) => {
 
 /* GET the game. */
 router.get("/:id", (req, res) => {
-  if (db.state == db.State.NO_GAME || req.params.id != db.game.id) {
+  if (db.getState() === State.NO_GAME || req.params.id != db.game.id) {
     return res.sendStatus(404);
   }
   const auth = getAuth(req);
@@ -39,7 +40,7 @@ router.get("/:id", (req, res) => {
 
 /* POST to make a move. */
 router.post("/:id", (req, res) => {
-  if (db.state == db.State.NO_GAME || req.params.id != db.game.id) {
+  if (db.getState() === State.NO_GAME || req.params.id != db.game.id) {
     return res.sendStatus(404);
   }
   const auth = getAuth(req);
@@ -48,18 +49,10 @@ router.post("/:id", (req, res) => {
   }
   const player = auth[0];
   if (req.body.move) {
-    const move = req.body.move;
-    if (
-      !move.piece ||
-      move.piece.length != 2 ||
-      !move.placement ||
-      !["left", "right"].includes(move.placement)
-    ) {
-      return res.status(400).send("You must provide a piece and a placement");
-    }
     try {
-      db.game.makeMove(player, move.piece, move.placement);
+      db.game.makeMove(player, req.body.move);
     } catch (err) {
+      console.log(err);
       return res.status(400).send(err);
     }
     return res.sendStatus(200);
@@ -69,7 +62,7 @@ router.post("/:id", (req, res) => {
 
 /* DELETE the game. */
 router.delete("/:id", (_, res) => {
-  if (db.state == db.State.NO_GAME) {
+  if (db.getState() === State.NO_GAME) {
     return res.sendStatus(404);
   }
   db.endGame();

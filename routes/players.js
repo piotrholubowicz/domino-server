@@ -1,10 +1,11 @@
 var express = require("express");
 var router = express.Router();
 var db = require("../db");
+var State = require("../state");
 
 /* GET players listing. */
 router.get("/", (_, res) => {
-  return db.state == db.State.NO_GAME
+  return db.getState() === State.NO_GAME
     ? res.sendStatus(404)
     : res.json(db.game.players);
 });
@@ -12,7 +13,7 @@ router.get("/", (_, res) => {
 /* PUT to change the password. Allowed only once. */
 router.put("/:id", (req, res) => {
   const player = req.params.id;
-  if (db.state == db.State.NO_GAME || !db.game.players.includes(player)) {
+  if (db.getState() === State.NO_GAME || !db.game.players.includes(player)) {
     return res.sendStatus(404);
   }
   if (db.game.passwords[player]) {
