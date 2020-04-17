@@ -14,7 +14,7 @@ assert ()                 #  If condition false,
 # assert "`curl -X GET -s -o /dev/null -w "%{http_code}" http://localhost:3000/players` -eq 200"
 echo && curl -X GET http://localhost:3000/game -H 'Content-Type: application/json'
 echo && curl -X GET http://localhost:3000/players -H 'Content-Type: application/json'
-echo && curl -X POST http://localhost:3000/game -H 'Content-Type: application/json' -d '{ "players": ["Alpha", "Bravo", "Charlie", "Delta"] }'
+echo && curl -X POST http://localhost:3000/game?mock=1 -H 'Content-Type: application/json' -d '{ "players": ["Alpha", "Bravo", "Charlie", "Delta"] }'
 echo && curl -X GET http://localhost:3000/players -H 'Content-Type: application/json'
 echo && curl -X PUT http://localhost:3000/players/Alpha -H 'Content-Type: application/json' -d '{ "password": "A1" }'
 echo && curl -X PUT http://localhost:3000/players/Bravo -H 'Content-Type: application/json' -d '{ "password": "B2" }'

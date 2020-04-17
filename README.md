@@ -11,6 +11,7 @@ The backend for hosting domino games.
 
 - GET /game/X - returns the game; use basic HTTP authentication to get a view for a player
 - POST /game/X - make a move or choose to start the next round; authentication required
+  - make a move - provide a `move`, with a `piece` (orientation doesn't matter) and the `placement` (`left` or `right`)
 - DELETE /game/X - ends the game and deletes all players; authentication required
 
 /players

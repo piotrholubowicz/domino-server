@@ -1,15 +1,16 @@
 class Game {
-  constructor(id, players) {
+  constructor(id, players, mock) {
     this.id = id;
     this.players = players; // ordered once the game starts, 0&2 vs 1&3
     this.passwords = {}; // name : password
-    this.hands = dealPieces(players); // name : list of pieces ([][])
+    this.hands = mock ? mockPieces(players) : dealPieces(players); // name : list of pieces ([][])
     this.table = [][2]; // list of pieces from left to right
     this.firstPiece = []; // the first piece that was played, for table positioning
     this.currentPlayer = Object.keys(this.hands).find((player) =>
       this.hands[player].find((piece) => piece[0] == 6 && piece[1] == 6)
     );
     this.scoreLog = [][2]; // list of rounds, for each the points gained by each team
+    console.log(this.hands);
   }
 
   view(player) {
@@ -27,6 +28,8 @@ class Game {
       scoreLog: this.scoreLog,
     };
   }
+
+  makeMove(player, piece, placement) {}
 }
 
 function dealPieces(players) {
@@ -47,6 +50,47 @@ function dealPieces(players) {
   return hands;
 }
 
+function mockPieces(players) {
+  return {
+    [players[0]]: [
+      [0, 5],
+      [2, 2],
+      [3, 4],
+      [2, 5],
+      [0, 4],
+      [0, 0],
+      [3, 5],
+    ],
+    [players[1]]: [
+      [4, 6],
+      [1, 3],
+      [6, 6],
+      [4, 5],
+      [1, 1],
+      [0, 1],
+      [2, 3],
+    ],
+    [players[2]]: [
+      [3, 3],
+      [3, 6],
+      [0, 3],
+      [0, 2],
+      [1, 6],
+      [4, 4],
+      [2, 6],
+    ],
+    [players[3]]: [
+      [0, 6],
+      [2, 4],
+      [1, 4],
+      [1, 5],
+      [5, 5],
+      [1, 2],
+      [5, 6],
+    ],
+  };
+}
+
 class GameState {
   constructor() {
     this.State = Object.freeze({
@@ -59,8 +103,8 @@ class GameState {
     this.game = undefined;
   }
 
-  startGame(id, players) {
-    this.game = new Game(id, players);
+  startGame(id, players, mock = false) {
+    this.game = new Game(id, players, mock);
     this.state = this.State.GAME_IN_PROGRESS;
   }
 

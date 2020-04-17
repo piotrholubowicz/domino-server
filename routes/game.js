@@ -20,7 +20,7 @@ router.post("/", (req, res) => {
   if (!players || players.length != 4 || new Set(players).size != 4) {
     return res.status(400).send("Malformed property: players");
   }
-  db.startGame("X", players);
+  db.startGame("X", players, req.query.mock);
   return res.sendStatus(200);
 });
 
@@ -35,6 +35,36 @@ router.get("/:id", (req, res) => {
     return res.sendStatus(403);
   }
   return res.json(db.game.view(player));
+});
+
+/* POST to make a move. */
+router.post("/:id", (req, res) => {
+  if (db.state == db.State.NO_GAME || req.params.id != db.game.id) {
+    return res.sendStatus(404);
+  }
+  const auth = getAuth(req);
+  if (!auth || db.game.passwords[auth[0]] != auth[1]) {
+    return res.sendStatus(403);
+  }
+  const player = auth[0];
+  if (req.body.move) {
+    const move = req.body.move;
+    if (
+      !move.piece ||
+      move.piece.length != 2 ||
+      !move.placement ||
+      !["left", "right"].includes(move.placement)
+    ) {
+      return res.status(400).send("You must provide a piece and a placement");
+    }
+    try {
+      db.game.makeMove(player, move.piece, move.placement);
+    } catch (err) {
+      return res.status(400).send(err);
+    }
+    return res.sendStatus(200);
+  }
+  return res.status(400).send("You must provide a move");
 });
 
 /* DELETE the game. */
