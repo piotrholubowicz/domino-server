@@ -37,6 +37,15 @@ router.get("/:id", (req, res) => {
   return res.json(db.game.view(player));
 });
 
+/* DELETE the game. */
+router.delete("/:id", (_, res) => {
+  if (db.state == db.State.NO_GAME) {
+    return res.sendStatus(404);
+  }
+  db.endGame();
+  res.sendStatus(204);
+});
+
 module.exports = router;
 
 function getAuth(req) {

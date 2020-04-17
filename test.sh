@@ -21,5 +21,8 @@ echo && curl -X PUT http://localhost:3000/players/Bravo -H 'Content-Type: applic
 echo && curl -X PUT http://localhost:3000/players/Charlie -H 'Content-Type: application/json' -d '{ "password": "C3" }'
 echo && curl -X PUT http://localhost:3000/players/Delta -H 'Content-Type: application/json' -d '{ "password": "D4" }'
 echo && curl -X GET -L http://localhost:3000/game -H 'Content-Type: application/json'
+echo && curl -X GET -L http://localhost:3000/game -H 'Content-Type: application/json' -H 'Authorization: Basic QnJhdm86QjI='
+
+echo && curl -X DELETE http://localhost:3000/game/X -H 'Authorization: Basic QnJhdm86QjI='
 
 echo '\nFinished.'
