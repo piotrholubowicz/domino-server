@@ -13,7 +13,7 @@ The backend for hosting domino games.
 - POST /game/X - make a move or choose to start the next round; authentication required
   - make a move - provide a `move`, with a `piece` (orientation doesn't matter) and the `placement` (`left` or `right`), or saying `pass`
   - start next round - provide `nextround: true`
-- DELETE /game/X - ends the game and deletes all players; authentication required
+- DELETE /game/X - ends the game and deletes all players
 
 /players
 
