@@ -19,7 +19,9 @@ router.post("/", (req, res) => {
 
   const players = req.body.players;
   if (!players || players.length != 4 || new Set(players).size != 4) {
-    return res.status(400).send("Malformed property: players");
+    return res
+      .status(400)
+      .send("You need to provide exactly 4 different players");
   }
   db.startGame("X", players, req.query.mock);
   return res.status(200).send("game/X");
