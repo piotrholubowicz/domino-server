@@ -24,7 +24,7 @@ router.put("/:id", (req, res) => {
     return res.status(400).send("You must provide a password");
   }
   db.game.passwords[player] = password;
-  return res.sendStatus(200);
+  return res.sendStatus(204);
 });
 
 module.exports = router;
