@@ -22,7 +22,7 @@ router.post("/", (req, res) => {
     return res.status(400).send("Malformed property: players");
   }
   db.startGame("X", players, req.query.mock);
-  return res.sendStatus(200);
+  return res.status(200).send("game/X");
 });
 
 /* GET the game. */
