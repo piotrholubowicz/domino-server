@@ -24,7 +24,7 @@ router.post("/", (req, res) => {
       .send("You need to provide exactly 4 different players");
   }
   db.startGame("X", players, req.query.mock);
-  return res.status(200).send("game/X");
+  return res.status(200).send({ url: "/game/X" });
 });
 
 /* GET the game. */
