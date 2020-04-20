@@ -20,3 +20,4 @@ The backend for hosting domino games.
 - GET /players - returns the list of players
 
 - PUT /players/X - set a password for the player
+- DELETE /players/X - reset the player's password

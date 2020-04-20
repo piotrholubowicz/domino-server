@@ -16,15 +16,29 @@ router.put("/:id", (req, res) => {
   if (db.getState() === State.NO_GAME || !db.game.players.includes(player)) {
     return res.sendStatus(404);
   }
-  if (db.game.passwords[player]) {
-    return res.status(409).send("Password already exists");
-  }
   const password = req.body.password;
   if (!password) {
     return res.status(400).send("You must provide a password");
   }
+  if (db.game.passwords[player]) {
+    if (db.game.passwords[player] === password) {
+      // Confirms the password is ok
+      return res.sendStatus(204);
+    }
+    return res.status(409).send("This player has already been claimed");
+  }
   db.game.passwords[player] = password;
   return res.sendStatus(204);
+});
+
+/* DELETE to reset the player. */
+router.delete("/:id", (_, res) => {
+  const player = req.params.id;
+  if (db.getState() === State.NO_GAME || !db.game.players.includes(player)) {
+    return res.sendStatus(404);
+  }
+  db.game.passwords[player] = undefined;
+  res.sendStatus(204);
 });
 
 module.exports = router;
