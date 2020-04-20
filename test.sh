@@ -51,6 +51,7 @@ echo && curl -X GET -L $HOST/game -H "$JS"
 echo && curl -X POST $HOST/game/X -H "$JS" -H "$A1" -d '{ "nextround": true }'
 echo && curl -X GET -L $HOST/game -H "$JS"
 
-echo && curl -X DELETE $HOST/game/X -H "$B2"
+echo && curl -X DELETE $HOST/players/Alpha
+echo && curl -X DELETE $HOST/game/X
 
 echo '\nFinished.'

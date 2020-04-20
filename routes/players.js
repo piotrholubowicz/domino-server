@@ -32,7 +32,7 @@ router.put("/:id", (req, res) => {
 });
 
 /* DELETE to reset the player. */
-router.delete("/:id", (_, res) => {
+router.delete("/:id", (req, res) => {
   const player = req.params.id;
   if (db.getState() === State.NO_GAME || !db.game.players.includes(player)) {
     return res.sendStatus(404);
