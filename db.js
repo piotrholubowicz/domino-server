@@ -123,7 +123,7 @@ class Game {
           piece[0] === this.table[0][0] || piece[1] === this.table[0][0]
       ).length === 7
     ) {
-      this.addScore(this.roundBlocked());
+      this.scoreLog.push(this.roundBlocked());
       return true;
     }
     return false;
@@ -158,15 +158,6 @@ class Game {
       return [0, points[0]];
     }
     return [0, 0];
-  }
-
-  addScore(score) {
-    const idx = this.currentPlayerIdx();
-    if (idx === 0 || idx === 2) {
-      this.scoreLog.push([score, 0]);
-    } else {
-      this.scoreLog.push([0, score]);
-    }
   }
 
   currentPlayerIdx() {
