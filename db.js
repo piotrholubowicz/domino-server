@@ -13,6 +13,7 @@ class Game {
       this.hands[player].find(pieceEquals, [6, 6])
     );
     this.startingPlayer = this.currentPlayer;
+    this.lastMove = undefined; // player, move(pass / piece, position)
     this.scoreLog = []; // list of rounds, for each the points gained by each team
   }
 
@@ -33,6 +34,7 @@ class Game {
       table: this.table,
       firstPiece: this.firstPiece,
       currentPlayer: this.currentPlayer,
+      lastMove: this.lastMove,
       scoreLog: this.scoreLog,
     };
   }
@@ -46,6 +48,7 @@ class Game {
     }
     if (move === "pass") {
       // validate?
+      this.lastMove = { player: this.currentPlayer, move };
       this.currentPlayer = this.incrementPlayer(this.currentPlayer);
       return;
     }
@@ -77,6 +80,7 @@ class Game {
       }
     }
     this.hands[player].splice(pieceIdx, 1);
+    this.lastMove = { player: this.currentPlayer, move };
     if (!this.endOfRound()) {
       this.currentPlayer = this.incrementPlayer(this.currentPlayer);
     }
