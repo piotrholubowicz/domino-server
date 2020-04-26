@@ -24,7 +24,12 @@ class Game {
   view(player) {
     var handsView = {};
     for (var p in this.hands) {
-      handsView[p] = p == player ? this.hands[p] : this.hands[p].length;
+      handsView[p] =
+        p == player ||
+        this.state === State.ROUND_BLOCKED ||
+        this.state === State.ROUND_FINISHED
+          ? this.hands[p]
+          : this.hands[p].length;
     }
     return {
       id: this.id,
