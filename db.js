@@ -8,7 +8,7 @@ class Game {
     this.passwords = {}; // name : password
     this.hands = mock ? mockPieces(players) : dealPieces(players); // name : list of pieces ([][])
     this.table = []; // list of pieces from left to right
-    this.firstPiece = []; // the first piece that was played, for table positioning
+    this.firstPiece = undefined; // the first piece that was played, for table positioning
     this.currentPlayer = Object.keys(this.hands).find((player) =>
       this.hands[player].find(pieceEquals, [6, 6])
     );
