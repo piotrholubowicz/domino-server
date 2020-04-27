@@ -67,7 +67,11 @@ class Game {
     }
     const piece = move.piece;
     const placement = move.placement;
-    if (this.table.length == 0 && !pieceEquals.call(piece, [6, 6])) {
+    if (
+      this.scoreLog.length === 0 &&
+      this.table.length === 0 &&
+      !pieceEquals.call(piece, [6, 6])
+    ) {
       throw `The game must start with [6,6]`;
     }
     const pieceIdx = this.hands[player].findIndex(pieceEquals, piece);
@@ -175,6 +179,8 @@ class Game {
     }
     this.table = [];
     this.hands = dealPieces(this.players);
+    this.firstPiece = undefined;
+    this.lastMove = undefined;
     this.startingPlayer = this.incrementPlayer(this.startingPlayer);
     this.currentPlayer = this.startingPlayer;
     this.state = State.GAME_IN_PROGRESS;
