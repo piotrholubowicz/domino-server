@@ -90,7 +90,9 @@ class Game {
     }
     this.hands[player].splice(pieceIdx, 1);
     this.lastMove = { player: this.currentPlayer, move };
-    if (!this.endOfRound()) {
+    if (this.endOfRound()) {
+      this.currentPlayer = undefined;
+    } else {
       this.currentPlayer = this.incrementPlayer(this.currentPlayer);
     }
   }
