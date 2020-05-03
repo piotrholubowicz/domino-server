@@ -58,7 +58,7 @@ router.post("/:id", (req, res) => {
     } else {
       return res.status(400).send("You must provide a move or next round");
     }
-    return res.sendStatus(200);
+    return res.sendStatus(204);
   } catch (err) {
     console.log(err);
     return res.status(400).send(err);
