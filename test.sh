@@ -6,8 +6,7 @@ B2='Authorization: Basic QnJhdm86QjI='
 C3='Authorization: Basic Q2hhcmxpZTpDMw=='
 D4='Authorization: Basic RGVsdGE6RDQ='
 
-# HOST='http://localhost:3000'
-HOST='https://domino-server-production.up.railway.app'
+HOST="${HOST:-http://localhost:3000}"
 
 echo && curl -X GET $HOST/game -H "$JS"
 echo && curl -X GET $HOST/players -H "$JS"

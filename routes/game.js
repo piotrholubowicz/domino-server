@@ -81,7 +81,7 @@ function getAuth(req) {
   if (!authorization || !authorization.startsWith("Basic ")) {
     return;
   }
-  const buffer = new Buffer(authorization.substring("Basic ".length), "base64");
+  const buffer = Buffer.from(authorization.substring("Basic ".length), "base64");
   const parts = buffer.toString("ascii").split(":");
   if (parts.length != 2) {
     return;
