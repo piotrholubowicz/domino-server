@@ -6,7 +6,7 @@ B2='Authorization: Basic QnJhdm86QjI='
 C3='Authorization: Basic Q2hhcmxpZTpDMw=='
 D4='Authorization: Basic RGVsdGE6RDQ='
 
-HOST="${HOST:-http://localhost:3000}"
+HOST="${HOST:-https://domino-server-d5tb.onrender.com}"
 
 echo && curl -X GET $HOST/game -H "$JS"
 echo && curl -X GET $HOST/players -H "$JS"
