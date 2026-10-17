@@ -53,4 +53,4 @@ echo && curl -X GET -L $HOST/game -H "$JS"
 echo && curl -X DELETE $HOST/players/Alpha
 echo && curl -X DELETE $HOST/game/X
 
-echo '\nFinished.'
+echo -e '\nFinished.'
